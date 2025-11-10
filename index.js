@@ -63,14 +63,16 @@ async function generateReport(shouldReset = false) {
     return { success: true, message: 'Không có dữ liệu' };
   }
 
-  // Lấy thời gian hiện tại
+  // Lấy thời gian hiện tại theo múi giờ Việt Nam (GMT+7)
   const now = new Date();
   const dateStr = now.toLocaleDateString('vi-VN', { 
+    timeZone: 'Asia/Ho_Chi_Minh',
     year: 'numeric', 
     month: '2-digit', 
     day: '2-digit' 
   });
   const timeStr = now.toLocaleTimeString('vi-VN', { 
+    timeZone: 'Asia/Ho_Chi_Minh',
     hour: '2-digit', 
     minute: '2-digit', 
     second: '2-digit',
@@ -184,9 +186,10 @@ client.on('messageCreate', async (message) => {
   }
 });
 
-// Cron job tổng kết 0h hàng ngày
-cron.schedule('0 0 * * *', async () => {
-  console.log('⏰ Bắt đầu tổng kết tự động lúc 0h...');
+// Cron job tổng kết 0h hàng ngày (theo giờ Việt Nam)
+// 0h giờ VN = 17h UTC (VN = UTC+7)
+cron.schedule('0 17 * * *', async () => {
+  console.log('⏰ Bắt đầu tổng kết tự động lúc 0h giờ Việt Nam...');
   await generateReport(true); // true = reset dữ liệu cho ngày mới
   console.log('✅ Hoàn thành tổng kết tự động');
 });

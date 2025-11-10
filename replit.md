@@ -11,6 +11,9 @@ This is a Discord bot that automatically tracks and summarizes staff daily activ
   - Created .env.example for environment variable documentation
   - Configured workflow for running the bot
   - All required secrets configured and bot running successfully
+  - Added !tongket command for instant manual reports
+  - Improved report UI with Discord mentions, medals, and statistics
+  - Configured timezone to Vietnam (GMT+7) for both display and auto-report scheduling
 
 ## Project Architecture
 - **Language:** Node.js v20 (ES Modules)
