@@ -1,10 +1,10 @@
-// Load biến môi trường
-require('dotenv').config();
+// Load dotenv
+import 'dotenv/config'; // tự động gọi config()
 
 // Import Discord.js
-const { Client, GatewayIntentBits } = require('discord.js');
+import { Client, GatewayIntentBits } from 'discord.js';
 
-// Khởi tạo client duy nhất
+// Khởi tạo client
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -16,9 +16,9 @@ const client = new Client({
 // Biến môi trường
 const prefix = process.env.PREFIX;
 const ownerId = process.env.OWNER_ID;
-const token = process.env.DISCORD_TOKEN || process.env.TOKEN; // dùng TOKEN hoặc DISCORD_TOKEN
+const token = process.env.DISCORD_TOKEN || process.env.TOKEN;
 
-// Event khi bot đăng nhập thành công
+// Event khi bot đăng nhập
 client.once('ready', () => {
   console.log(`✅ Bot đã đăng nhập thành công với tên: ${client.user.tag}`);
 });
@@ -35,5 +35,5 @@ client.on('messageCreate', message => {
   }
 });
 
-// Login bot (chỉ 1 lần)
+// Login bot
 client.login(token);
