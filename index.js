@@ -11,7 +11,6 @@ client.once('ready', () => {
 
 client.login(process.env.TOKEN);
 require('dotenv').config();
-const { Client, GatewayIntentBits } = require('discord.js');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
 
