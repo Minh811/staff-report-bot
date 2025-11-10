@@ -4,7 +4,53 @@ import cron from 'node-cron';
 import fs from 'fs';
 import path from 'path';
 import { parse } from 'json2csv';
+import 'dotenv/config';
+import { Client, GatewayIntentBits } from 'discord.js';
 
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent
+  ]
+});
+
+const token = process.env.DISCORD_TOKEN;
+const reportChannelId = process.env.REPORT_CHANNEL_ID;
+
+client.once('ready', () => {
+  console.log(`✅ Bot đã đăng nhập: ${client.user.tag}`);
+
+  // Gửi trạng thái ngay khi bot online
+  sendStatus();
+
+  // Gửi trạng thái mỗi 1 tiếng (3600000 ms)
+  setInterval(sendStatus, 3600000);
+});
+
+// Hàm gửi trạng thái
+async function sendStatus() {
+  try {
+    const channel = await client.channels.fetch(reportChannelId);
+    if (!channel) return console.log('Không tìm thấy kênh report!');
+    channel.send(`🟢 Bot đang hoạt động - ${new Date().toLocaleString()}`);
+  } catch (err) {
+    console.error('Lỗi khi gửi trạng thái:', err);
+  }
+}
+
+// Login bot
+client.login(token);
+
+import express from 'express';
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Bot đang chạy!');
+});
+
+const PORT = 3000;
+app.listen(PORT, () => console.log(`Server online trên port ${PORT}`));
 // Khởi tạo client
 const client = new Client({
   intents: [
