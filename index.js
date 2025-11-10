@@ -51,7 +51,7 @@ function saveData() {
 }
 
 // Khi bot sẵn sàng
-client.once('ready', () => {
+client.once('clientReady', () => {
   console.log(`✅ Bot đã đăng nhập: ${client.user.tag}`);
 });
 

@@ -1,45 +1,57 @@
 # Staff Report Bot
 
 ## Overview
-This is a Discord bot that allows staff members to report activities and sends automated reports to a designated channel. The bot is built with Node.js and Discord.js.
+This is a Discord bot that automatically tracks and summarizes staff daily activities. Staff members can log their completed tasks (help counts) using commands, and the bot compiles and sends automated reports at midnight each day. Built with Node.js and Discord.js.
 
-**Current State:** Imported from GitHub and configured for Replit environment.
+**Current State:** Fully configured and running in Replit environment.
 
 ## Recent Changes
-- **2025-11-10**: Imported project from GitHub and set up for Replit
-  - Installed Node.js 20 and npm dependencies
+- **2025-11-10**: Imported project from GitHub and fully configured for Replit
+  - Installed Node.js 20 and all npm dependencies (discord.js, dotenv, node-cron, json2csv)
   - Created .env.example for environment variable documentation
   - Configured workflow for running the bot
+  - All required secrets configured and bot running successfully
 
 ## Project Architecture
-- **Language:** Node.js (ES Modules)
+- **Language:** Node.js v20 (ES Modules)
 - **Main File:** index.js
 - **Dependencies:**
   - discord.js: Discord API interaction
   - dotenv: Environment variable management
+  - node-cron: Scheduled tasks for daily reports
+  - json2csv: CSV export functionality
+- **Data Storage:**
+  - `data/`: Daily JSON files storing staff help counts
+  - `exports/`: Auto-generated CSV reports
 
 ## Required Environment Variables
-The bot requires the following environment variables to be set in Replit Secrets:
-- `DISCORD_TOKEN`: Your Discord bot token
+All configured in Replit Secrets:
+- `DISCORD_TOKEN`: Discord bot authentication token
 - `PREFIX`: Command prefix (e.g., "!")
-- `OWNER_ID`: Discord user ID of the bot owner
-- `REPORT_CHANNEL_ID`: Channel ID where reports will be sent
+- `OWNER_ID`: Discord user ID of the bot owner (for admin commands)
+- `LOG_CHANNEL_ID`: Channel where staff log their help counts
+- `REPORT_CHANNEL_ID`: Channel where daily reports are sent
 
 ## Bot Features
-- **Command Prefix:** Configurable via PREFIX environment variable
-- **!ping:** Basic command to check if bot is responsive
-- **!report @user [reason]:** Report a staff member with an optional reason
+- **!help [count]:** Log help count in the designated log channel (default: 1 if count not specified)
+- **!exportcsv:** Export current day's data to CSV file (owner only)
+- **Automated Daily Reports:** Bot sends a summary to the report channel at midnight (0:00) each day
+- **Automatic CSV Export:** Generates CSV file with daily report data
+- **Data Persistence:** Saves daily data to JSON files by date (YYYY-MM-DD.json)
 
 ## Running the Bot
-The bot runs automatically via the configured workflow. It uses the command:
+The bot runs automatically via the configured workflow using:
 ```
 npm start
 ```
 
+The workflow starts on Repl boot and restarts automatically when needed.
+
 ## Setup Instructions
-1. Set the required environment variables in Replit Secrets
-2. The bot will automatically start and connect to Discord
-3. Use the configured prefix to interact with the bot in Discord
+1. All required environment variables are configured in Replit Secrets
+2. Bot automatically connects to Discord on startup
+3. Staff use `!help [count]` in the log channel to record their activities
+4. Bot sends automated reports at midnight and exports CSV files
 
 ## User Preferences
 None documented yet.
