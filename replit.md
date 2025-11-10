@@ -54,4 +54,4 @@ The workflow starts on Repl boot and restarts automatically when needed.
 4. Bot sends automated reports at midnight and exports CSV files
 
 ## User Preferences
-None documented yet.
+- **Language:** Communicate 100% in Vietnamese (tiếng Việt)
