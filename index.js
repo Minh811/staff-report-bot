@@ -63,10 +63,45 @@ async function generateReport(shouldReset = false) {
     return { success: true, message: 'Không có dữ liệu' };
   }
 
-  let summary = '📊 **Tổng kết số help nhân viên hôm nay**\n\n';
-  for (const userId in staffData) {
-    summary += `${staffData[userId].tag}: ${staffData[userId].count}\n`;
-  }
+  // Lấy thời gian hiện tại
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('vi-VN', { 
+    year: 'numeric', 
+    month: '2-digit', 
+    day: '2-digit' 
+  });
+  const timeStr = now.toLocaleTimeString('vi-VN', { 
+    hour: '2-digit', 
+    minute: '2-digit', 
+    second: '2-digit',
+    hour12: false
+  });
+
+  // Sắp xếp staff theo số help từ cao đến thấp
+  const sortedStaff = Object.entries(staffData)
+    .sort((a, b) => b[1].count - a[1].count);
+
+  // Tính tổng help
+  const totalHelps = sortedStaff.reduce((sum, [, data]) => sum + data.count, 0);
+
+  // Tạo nội dung tổng kết đẹp
+  let summary = '╔═══════════════════════════════════╗\n';
+  summary += '║   📊 **TỔNG KẾT SỐ HELP**   ║\n';
+  summary += '╚═══════════════════════════════════╝\n\n';
+  summary += `📅 **Ngày:** ${dateStr}\n`;
+  summary += `⏰ **Giờ tổng kết:** ${timeStr}\n`;
+  summary += `👥 **Số nhân viên:** ${sortedStaff.length} người\n`;
+  summary += `📈 **Tổng help:** ${totalHelps}\n\n`;
+  summary += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+
+  // Hiển thị từng nhân viên (tag Discord)
+  sortedStaff.forEach(([userId, data], index) => {
+    const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '▪️';
+    summary += `${medal} <@${userId}> - **${data.count}** help\n`;
+  });
+
+  summary += '\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  summary += '✨ Cảm ơn các bạn đã cố gắng! ✨';
 
   await reportChannel.send(summary);
 
