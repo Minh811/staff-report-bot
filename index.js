@@ -10,4 +10,28 @@ client.once('ready', () => {
 });
 
 client.login(process.env.TOKEN);
+require('dotenv').config();
+const { Client, GatewayIntentBits } = require('discord.js');
+
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
+
+const prefix = process.env.PREFIX;
+const ownerId = process.env.OWNER_ID;
+
+client.once('ready', () => {
+  console.log(`${client.user.tag} is online!`);
+});
+
+client.on('messageCreate', message => {
+  if (!message.content.startsWith(prefix) || message.author.bot) return;
+
+  const args = message.content.slice(prefix.length).trim().split(/ +/);
+  const command = args.shift().toLowerCase();
+
+  if (command === 'ping') {
+    message.channel.send('Pong!');
+  }
+});
+
+client.login(process.env.DISCORD_TOKEN);
 
