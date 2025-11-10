@@ -50,6 +50,47 @@ function saveData() {
   fs.writeFileSync(getTodayFile(), JSON.stringify(staffData, null, 2));
 }
 
+// Hàm tổng kết và export CSV
+async function generateReport(shouldReset = false) {
+  const reportChannel = await client.channels.fetch(reportChannelId);
+  if (!reportChannel) {
+    console.log('Không tìm thấy kênh report!');
+    return { success: false, message: 'Không tìm thấy kênh report!' };
+  }
+
+  if (Object.keys(staffData).length === 0) {
+    await reportChannel.send('📊 Không có dữ liệu help hôm nay.');
+    return { success: true, message: 'Không có dữ liệu' };
+  }
+
+  let summary = '📊 **Tổng kết số help nhân viên hôm nay**\n\n';
+  for (const userId in staffData) {
+    summary += `${staffData[userId].tag}: ${staffData[userId].count}\n`;
+  }
+
+  await reportChannel.send(summary);
+
+  // Tự động export CSV
+  try {
+    const fields = ['tag', 'count'];
+    const dataArray = Object.values(staffData);
+    const csv = parse(dataArray, { fields });
+    const fileName = `report-${new Date().toISOString().split('T')[0]}.csv`;
+    fs.writeFileSync(path.join(exportDir, fileName), csv);
+    console.log(`✅ Export CSV: ${fileName}`);
+  } catch (err) {
+    console.error('⚠️ Lỗi export CSV:', err);
+  }
+
+  // Reset dữ liệu nếu cần (dùng cho cron job 0h)
+  if (shouldReset) {
+    staffData = {};
+    saveData();
+  }
+
+  return { success: true, message: 'Đã tổng kết thành công' };
+}
+
 // Khi bot sẵn sàng
 client.once('clientReady', () => {
   console.log(`✅ Bot đã đăng nhập: ${client.user.tag}`);
@@ -90,40 +131,29 @@ client.on('messageCreate', async (message) => {
       message.reply('⚠️ Lỗi khi export CSV.');
     }
   }
+
+  // Lệnh tổng kết ngay lập tức (chỉ owner)
+  if (command === 'tongket' && message.author.id === ownerId) {
+    try {
+      await message.reply('⏳ Đang tổng kết...');
+      const result = await generateReport(false); // false = không reset dữ liệu
+      if (result.success) {
+        await message.reply('✅ Đã gửi báo cáo tổng kết và export CSV!');
+      } else {
+        await message.reply(`⚠️ ${result.message}`);
+      }
+    } catch (err) {
+      console.error(err);
+      await message.reply('⚠️ Lỗi khi tổng kết.');
+    }
+  }
 });
 
 // Cron job tổng kết 0h hàng ngày
 cron.schedule('0 0 * * *', async () => {
-  const reportChannel = await client.channels.fetch(reportChannelId);
-  if (!reportChannel) return console.log('Không tìm thấy kênh report!');
-
-  if (Object.keys(staffData).length === 0) {
-    await reportChannel.send('📊 Không có dữ liệu help hôm nay.');
-    return;
-  }
-
-  let summary = '📊 **Tổng kết số help nhân viên hôm nay**\n\n';
-  for (const userId in staffData) {
-    summary += `${staffData[userId].tag}: ${staffData[userId].count}\n`;
-  }
-
-  await reportChannel.send(summary);
-
-  // Tự động export CSV
-  try {
-    const fields = ['tag', 'count'];
-    const dataArray = Object.values(staffData);
-    const csv = parse(dataArray, { fields });
-    const fileName = `report-${new Date().toISOString().split('T')[0]}.csv`;
-    fs.writeFileSync(path.join(exportDir, fileName), csv);
-    console.log(`✅ Export CSV tự động: ${fileName}`);
-  } catch (err) {
-    console.error('⚠️ Lỗi export CSV tự động:', err);
-  }
-
-  // Reset dữ liệu ngày mới
-  staffData = {};
-  saveData();
+  console.log('⏰ Bắt đầu tổng kết tự động lúc 0h...');
+  await generateReport(true); // true = reset dữ liệu cho ngày mới
+  console.log('✅ Hoàn thành tổng kết tự động');
 });
 
 // Login bot

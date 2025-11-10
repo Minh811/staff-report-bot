@@ -34,6 +34,7 @@ All configured in Replit Secrets:
 
 ## Bot Features
 - **!help [count]:** Log help count in the designated log channel (default: 1 if count not specified)
+- **!tongket:** Admin command to instantly generate summary report and export CSV (owner only)
 - **!exportcsv:** Export current day's data to CSV file (owner only)
 - **Automated Daily Reports:** Bot sends a summary to the report channel at midnight (0:00) each day
 - **Automatic CSV Export:** Generates CSV file with daily report data
