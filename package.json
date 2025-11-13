@@ -4,11 +4,14 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "push": "git add . && git commit -m 'Auto-update' && git push origin main"
   },
   "dependencies": {
     "discord.js": "^14.16.0",
     "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
     "json2csv": "^6.0.0-alpha.2",
     "node-cron": "^4.2.1"
   }
